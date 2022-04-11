@@ -44,6 +44,8 @@ dependencies:
   google_sign_in: ^5.2.3
   file_picker: ^4.4.0
   path_provider: ^2.0.9
+  agora_rtc_engine: null 
+  permission_handler: null
   # advance_pdf_viewer: ^2.0.1
   # flutter_pdfview: any
   native_pdf_view: ^6.0.0+1
