@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:native_pdf_view/native_pdf_view.dart';
 import 'package:note_app_students/comp/msg_snack.dart';
+import 'package:note_app_students/model/live_chat.dart';
 import 'package:note_app_students/pages/RegisterationPage/comp/more_info_sheet.dart';
 import 'package:note_app_students/pages/RegisterationPage/controller/signuplogin_controller.dart';
 import 'package:note_app_students/pages/RegisterationPage/registration_page.dart';
@@ -41,13 +42,11 @@ class UserService extends GetxService {
 
       pvController.setIsDownloading(false);
 
-      
       pvController.setPdfController(PdfControllerPinch(
           initialPage: 1,
           document: PdfDocument.openFile("${appDocDir.path}/${nid}.pdf")));
-      
-      pvController.setFilePath("${appDocDir.path}/${nid}.pdf");
 
+      pvController.setFilePath("${appDocDir.path}/${nid}.pdf");
 
       // MSGSnack succesMsg = MSGSnack(
       //     title: "Success!", msg: "Download is completed.", color: Colors.red);
@@ -89,11 +88,20 @@ class UserService extends GetxService {
     }
   }
 
-  saveUserInfo(String name, String grade, BuildContext context) async {
-    MyInfo myInfo = MyInfo(auth.currentUser!.uid, name, grade);
-    Map<String, Object?> mydata = myInfo.toFirebaseMap(myInfo);
+  saveUserInfo(
+      String name, String grade, BuildContext context, File file) async {
     try {
       slcontroller.setIsLoading(true);
+
+      Map<String, Object?> mydata;
+
+      TaskSnapshot taskSnapshot =
+          await storage.ref("Students/${auth.currentUser!.uid}").putFile(file);
+
+      String img_url = await taskSnapshot.ref.getDownloadURL();
+
+      MyInfo myInfo = MyInfo(auth.currentUser!.uid, name, grade, img_url);
+      mydata = myInfo.toFirebaseMap(myInfo);
 
       await datebase
           .ref()
@@ -118,11 +126,26 @@ class UserService extends GetxService {
   }
 
   saveUserInfoFromDrawer(
-      String name, String grade, BuildContext context) async {
-    MyInfo myInfo = MyInfo(auth.currentUser!.uid, name, grade);
-    Map<String, Object?> mydata = myInfo.toFirebaseMap(myInfo);
+      String name, String grade, BuildContext context, File? file) async {
     try {
       dController.setIsLoading(true);
+
+      Map<String, Object?> mydata;
+
+      if (file == null) {
+        MyInfo myInfo = MyInfo(auth.currentUser!.uid, name, grade,
+            dController.myInfo.value.img_url);
+        mydata = myInfo.toFirebaseMap(myInfo);
+      } else {
+        TaskSnapshot taskSnapshot = await storage
+            .ref("Students/${auth.currentUser!.uid}")
+            .putFile(file);
+
+        String img_url = await taskSnapshot.ref.getDownloadURL();
+
+        MyInfo myInfo = MyInfo(auth.currentUser!.uid, name, grade, img_url);
+        mydata = myInfo.toFirebaseMap(myInfo);
+      }
 
       await datebase
           .ref()
@@ -165,9 +188,7 @@ class UserService extends GetxService {
       slcontroller.setIsLoading(true);
       await auth
           .signInWithEmailAndPassword(email: email, password: password)
-          .then((UserCredential userCredential) async{
-        
-
+          .then((UserCredential userCredential) async {
         await checkUser(context);
         slcontroller.setIsLoading(false);
       });
@@ -233,6 +254,50 @@ class UserService extends GetxService {
     } catch (e) {
       slcontroller.setIsLoading(false);
 
+      MSGSnack errorMSG =
+          MSGSnack(color: Colors.red, title: "Error!", msg: e.toString());
+      errorMSG.show();
+    }
+  }
+
+  sendLiveStreaChat(String text, String streamId) async {
+    DatabaseReference ref =
+        datebase.ref().child("LiveStreamChat").child(streamId).push();
+    try {
+      LiveChat liveChat = LiveChat(dController.myInfo.value.img_url,
+          dController.myInfo.value.name, text, ref.key!);
+      await ref.update(liveChat.toFirebaseMap(liveChat));
+    } catch (e) {
+      MSGSnack errorMSG =
+          MSGSnack(color: Colors.red, title: "Error!", msg: e.toString());
+      errorMSG.show();
+    }
+  }
+
+  joinLiveStream(String channelName, String currentNum) async {
+    try {
+      await datebase
+          .ref()
+          .child("LiveStream")
+          .child(channelName)
+          .child("numOfUser")
+          .set((int.parse(currentNum) + 1).toString());
+    } catch (e) {
+      MSGSnack errorMSG =
+          MSGSnack(color: Colors.red, title: "Error!", msg: e.toString());
+      errorMSG.show();
+    }
+  }
+
+  leaveLiveStream(String channelName, String currentNum) async {
+    try {
+      await datebase
+          .ref()
+          .child("LiveStream")
+          .child(channelName)
+          .child("numOfUser")
+          .set((int.parse(currentNum) - 1).toString());
+    } catch (e) {
       MSGSnack errorMSG =
           MSGSnack(color: Colors.red, title: "Error!", msg: e.toString());
       errorMSG.show();

@@ -2,10 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:note_app_students/Firebase%20Services/user_service.dart';
+import 'package:note_app_students/comp/msg_snack.dart';
 import 'package:note_app_students/constants/values.dart';
 import 'package:note_app_students/pages/RegisterationPage/comp/btn.dart';
 import 'package:note_app_students/pages/RegisterationPage/comp/input.dart';
+import 'package:note_app_students/pages/RegisterationPage/controller/signuplogin_controller.dart';
 
 class MoreInfo extends StatefulWidget {
   const MoreInfo({Key? key}) : super(key: key);
@@ -18,7 +21,8 @@ class _MoreInfoState extends State<MoreInfo> {
   GlobalKey<FormState> _moreInfoKey = GlobalKey<FormState>();
   TextEditingController nameTC = TextEditingController();
   TextEditingController gradeTC = TextEditingController();
-  
+
+  SLController slController = Get.put(SLController());
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +47,37 @@ class _MoreInfoState extends State<MoreInfo> {
                       style:
                           TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 18),
+                  InkWell(
+                    onTap: () async {
+                      XFile? imageXFile = await ImagePicker()
+                          .pickImage(source: ImageSource.gallery);
+                      if (imageXFile == null) {
+                        MSGSnack msgSnack = MSGSnack(
+                            title: "Note!",
+                            msg: "Image is not selected",
+                            color: Colors.white);
+                        msgSnack.show();
+                      } else {
+                        slController.setProfileImage(imageXFile.path);
+                      }
+                    },
+                    child: Obx(
+                      () => slController.profileImage.value == ""
+                          ? CircleAvatar(
+                              radius: 45,
+                              backgroundColor: mainColor,
+                              child: Icon(
+                                Icons.account_circle,
+                                color: whiteColor,
+                                size: 90,
+                              ))
+                          : CircleAvatar(
+                              radius: 45,
+                              backgroundImage: FileImage(
+                                  File(slController.profileImage.value)),
+                            ),
+                    ),
+                  ),
                   Input(
                       textEditingController: nameTC,
                       hinttxt: "Abebe Chala",
@@ -59,13 +94,20 @@ class _MoreInfoState extends State<MoreInfo> {
                   const SizedBox(
                     height: 15,
                   ),
-                  
                   BTN(
                       text: "Submit",
                       action: () {
                         if (_moreInfoKey.currentState!.validate()) {
-                          Get.find<UserService>().saveUserInfo(
-                              nameTC.text, gradeTC.text, context);
+                          if (slController.profileImage.value != "") {
+                            Get.find<UserService>().saveUserInfo(
+                              nameTC.text,
+                              gradeTC.text,
+                              context,
+                              File(slController.profileImage.value)
+                            );
+                          }
+                        }else{
+
                         }
                       })
                 ],

@@ -41,6 +41,20 @@ class BottomNav extends StatelessWidget {
                 onPressed: () {
                   tabsController.setSellectedTab(1);
                 });
+          }),
+          const SizedBox(
+            width: 48,
+          ),
+          Obx(() {
+            bool isOne = tabsController.selectedIndex.value == 2;
+            return IconButton(
+                icon: Icon(
+                  Icons.video_call_outlined,
+                  color: isOne ? mainColor : Colors.black,
+                ),
+                onPressed: () {
+                  tabsController.setSellectedTab(2);
+                });
           })
         ],
       ),

@@ -5,6 +5,8 @@ class SLController extends GetxController {
 
   RxBool isLoading = false.obs;
 
+  var profileImage = "".obs;
+
   void toogleRegState(String state) {
     regState.value = state;
   }
@@ -12,10 +14,13 @@ class SLController extends GetxController {
   void setIsLoading(bool val) {
     isLoading.value = val;
   }
+
+  void setProfileImage(String img) {
+    profileImage.value = img;
+  }
 }
 
 class RegState {
   static const login = "Login";
   static const signUp = "SignUp";
-  
 }

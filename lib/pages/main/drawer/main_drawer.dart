@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:note_app_students/comp/msg_snack.dart';
 import 'package:note_app_students/pages/main/drawer/comp/editable.dart';
 import 'package:note_app_students/pages/main/drawer/comp/non_editable.dart';
 import '../../../Firebase Services/user_service.dart';
@@ -39,7 +43,12 @@ class _MainDrawerState extends State<MainDrawer> {
   saveUserInfo() async {
     await Get.find<UserService>()
         .saveUserInfoFromDrawer(
-            nameTC.text, gradeTC.text, context)
+            nameTC.text,
+            gradeTC.text,
+            context,
+            drawerController.profileImage.value != null
+                ? File(drawerController.profileImage.value)
+                : null)
         .then((val) {
       drawerController.setIsEditable(false);
     });
@@ -95,14 +104,44 @@ class _MainDrawerState extends State<MainDrawer> {
           Positioned(
               right: 105,
               bottom: 400,
-              child: CircleAvatar(
-                  radius: 45,
-                  backgroundColor: mainColor,
-                  child: Icon(
-                    Icons.account_circle,
-                    color: whiteColor,
-                    size: 90,
-                  ))),
+              child: InkWell(
+                onTap: () async {
+                  if (drawerController.isEditable.value) {
+                    XFile? imageXFile = await ImagePicker()
+                        .pickImage(source: ImageSource.gallery);
+                    if (imageXFile == null) {
+                      MSGSnack msgSnack = MSGSnack(
+                          title: "Note!",
+                          msg: "Image is not selected",
+                          color: Colors.white);
+                      msgSnack.show();
+                    } else {
+                      drawerController.setProfileImage(imageXFile.path);
+                    }
+                  }
+                },
+                child: Obx(
+                  () => drawerController.profileImage.value == ""
+                      ? drawerController.isEditable.value
+                          ? CircleAvatar(
+                              radius: 45,
+                              backgroundColor: mainColor,
+                              child: Icon(
+                                Icons.account_circle,
+                                color: whiteColor,
+                                size: 90,
+                              ))
+                          : CircleAvatar(
+                              radius: 45,
+                              backgroundImage: NetworkImage(
+                                  drawerController.myInfo.value.img_url))
+                      : CircleAvatar(
+                          radius: 45,
+                          backgroundImage: FileImage(
+                              File(drawerController.profileImage.value)),
+                        ),
+                ),
+              )),
           Positioned(
             bottom: 395,
             right: 30,
