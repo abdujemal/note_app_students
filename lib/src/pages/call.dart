@@ -153,6 +153,12 @@ class _CallPageState extends State<CallPage> {
     _users.forEach((int uid) =>
         list.add(RtcRemoteView.SurfaceView(channelId: "", uid: uid)));
     return list;
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
   }
 
   /// Video view wrapper
