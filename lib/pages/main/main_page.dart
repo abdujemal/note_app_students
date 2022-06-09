@@ -8,6 +8,7 @@ import 'package:note_app_students/pages/main/comp/bottom_nav.dart';
 import 'package:note_app_students/pages/main/controller/tabs_controller.dart';
 import 'package:note_app_students/pages/main/drawer/controller/drawer_controller.dart';
 import 'package:note_app_students/pages/main/drawer/main_drawer.dart';
+import 'package:note_app_students/pages/main/tabs/Live/live_stream.dart';
 import 'package:note_app_students/pages/main/tabs/chat/chat.dart';
 import 'package:note_app_students/pages/main/tabs/subjects/subjects.dart';
 
@@ -19,7 +20,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  List<String> tabNames = ["My Subjects", "Chat"];
+  List<String> tabNames = ["My Subjects", "Chat","Live Stream"];
 
   TabsController tabsController = Get.put(TabsController());
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -28,6 +29,7 @@ class _MainPageState extends State<MainPage> {
   List<Widget> tabs = [
     const MySubjects(),
     ChatPage(),
+    const LiveStreamPage()
   ];
 
   @override

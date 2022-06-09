@@ -210,7 +210,7 @@ class _CallPageState extends State<CallPage> {
 
   /// Toolbar layout
   Widget _toolbar() {
-    if (widget.role == ClientRole.Audience) return Container();
+    
     return Positioned(
       top: 0,
       right: 0,
@@ -242,8 +242,8 @@ class _CallPageState extends State<CallPage> {
               onPressed: () => _onCallEnd(context),
               icon: const Icon(
                 FontAwesomeIcons.times,
-                color: Colors.white,
-                size: 35.0,
+                color: Colors.red,
+                size: 23.0,
               ),
             ),
           ],
@@ -272,11 +272,11 @@ class _CallPageState extends State<CallPage> {
                     final LiveChat liveChat = LiveChat.fromFirebase(chatItem);
                     list.add(liveChat);
                   });
-                  list.sort(((a, b) => a.cid.compareTo(b.cid)));
+                  list.sort(((a, b) => b.cid.compareTo(a.cid)));
                 }
               }
               return Container(
-                padding: const EdgeInsets.symmetric(vertical: 48),
+                padding: const EdgeInsets.only(bottom: 75),
                 child: ListView.builder(
                   reverse: true,
                   itemCount: list.length,
@@ -286,47 +286,57 @@ class _CallPageState extends State<CallPage> {
                 ),
               );
             }),
-        Row(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: const Color.fromARGB(255, 216, 216, 216),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(17),
-                child: TextFormField(
-                  validator: (v) {
-                    if (v!.isEmpty) {
-                      return "This feild is required.";
-                    }
-                  },
-                  controller: chatTc,
-                  keyboardType: TextInputType.text,
-                  decoration: const InputDecoration.collapsed(
-                    hintText: "Say somthing",
+        Align(
+          alignment: Alignment.bottomLeft,
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: const Color.fromARGB(255, 216, 216, 216),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(17),
+                    child: SizedBox(
+                      height: 20,
+                      width: 150,
+                      child: TextFormField(
+                        validator: (v) {
+                          if (v!.isEmpty) {
+                            return "This feild is required.";
+                          }
+                        },
+                        controller: chatTc,
+                        keyboardType: TextInputType.text,
+                        decoration: const InputDecoration.collapsed(
+                          hintText: "Say somthing",
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(width: 15),
-            RawMaterialButton(
-              onPressed: () {
-                if (chatTc.text.isNotEmpty) {
-                  userService.sendLiveStreaChat(
-                      chatTc.text, widget.channelName);
-                  chatTc.text = "";
-                }
-              },
-              shape: const CircleBorder(),
-              fillColor: const Color.fromARGB(255, 216, 216, 216),
-              child: const Icon(
-                Icons.send,
-                color: Colors.white,
-              ),
-              padding: const EdgeInsets.all(5),
-            )
-          ],
+              const SizedBox(width: 0),
+              RawMaterialButton(
+                onPressed: () {
+                  if (chatTc.text.isNotEmpty) {
+                    userService.sendLiveStreaChat(
+                        chatTc.text, widget.channelName);
+                    chatTc.text = "";
+                  }
+                },
+                shape: const CircleBorder(),
+                fillColor: const Color.fromARGB(255, 216, 216, 216),
+                child: const Icon(
+                  Icons.send,
+                  color: Colors.white,
+                ),
+                padding: const EdgeInsets.all(5),
+              )
+            ],
+          ),
         )
       ],
     );

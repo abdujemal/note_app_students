@@ -16,15 +16,17 @@ class LiveChatItem extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           CircleAvatar(
-            radius: 20,
+            radius: 15,
             backgroundImage: NetworkImage(liveChat.img_url),
           ),
-          const SizedBox(width: 20,),
-          Row(
+          const SizedBox(width: 10,),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(liveChat.userName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20,color: Colors.white)),
-              const SizedBox(height: 10),
-              Text(liveChat.text, style: const TextStyle(fontSize: 18, color: Colors.white),)
+              Text(liveChat.userName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14,color: Colors.white)),
+              
+              Text(liveChat.text, style: const TextStyle(fontSize: 13, color: Colors.white),)
             ],
             )
         ],

@@ -48,10 +48,10 @@ class UserService extends GetxService {
 
       pvController.setFilePath("${appDocDir.path}/${nid}.pdf");
 
-      // MSGSnack succesMsg = MSGSnack(
-      //     title: "Success!", msg: "Download is completed.", color: Colors.red);
+      MSGSnack succesMsg = MSGSnack(
+          title: "Success!", msg: "Download is completed.", color: Colors.red);
 
-      // succesMsg.show();
+      succesMsg.show();
 
       // Get.back();
 
