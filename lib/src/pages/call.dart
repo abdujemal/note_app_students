@@ -3,14 +3,12 @@ import 'dart:async';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:note_app_students/Firebase%20Services/user_service.dart';
 import 'package:note_app_students/model/live_chat.dart';
-import 'package:note_app_students/pages/RegisterationPage/comp/input.dart';
 import 'package:note_app_students/src/pages/live_chat_item.dart';
 
 import '../utils/settings.dart';
